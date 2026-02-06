@@ -9,7 +9,7 @@ public class Triangle : Shape
     public double X3 { get; }
     public double Y3 { get; }
 
-    /// <summary>Создаёт равносторонний треугольник с центром (cx, cy) и высотой height.</summary>
+    /// Создаёт равносторонний треугольник с центром (cx, cy) и высотой height.
     public Triangle(IRenderer renderer, double cx, double cy, double height)
         : base(renderer)
     {

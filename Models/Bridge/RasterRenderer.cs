@@ -2,10 +2,8 @@ using System.Text;
 
 namespace ShapeBlazorApp_BridgePattern.Models.Bridge;
 
-/// <summary>
 /// Растровый рендерер — имитирует пиксельную графику.
 /// Рисует фигуры как набор маленьких квадратов (пикселей).
-/// </summary>
 public class RasterRenderer : IRenderer
 {
     public string Name => "Растровый (Raster)";

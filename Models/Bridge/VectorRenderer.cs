@@ -1,8 +1,6 @@
 namespace ShapeBlazorApp_BridgePattern.Models.Bridge;
 
-/// <summary>
 /// Векторный рендерер — рисует гладкие векторные фигуры (SVG).
-/// </summary>
 public class VectorRenderer : IRenderer
 {
     public string Name => "Векторный (Vector)";
