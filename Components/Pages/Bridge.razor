@@ -1,0 +1,113 @@
+@page "/bridge"
+@rendermode InteractiveServer
+@using ShapeBlazorApp_BridgePattern.Models.Bridge
+
+<PageTitle>Bridge Pattern — Рисование фигур</PageTitle>
+
+<div class="bridge-demo">
+    <h1>Паттерн Bridge: Рисование фигур</h1>
+    <p class="lead">
+        Выберите рендерер — фигуры останутся теми же, изменится только способ отрисовки.
+        Добавьте новый <code>IRenderer</code> или новую <code>Shape</code> без изменения других классов.
+    </p>
+
+    <div class="renderer-selector mb-4">
+        <label class="form-label fw-bold">Рендерер (Implementation):</label>
+        <select class="form-select form-select-lg" @bind="SelectedRendererIndex">
+            @for (var i = 0; i < Renderers.Count; i++)
+            {
+                var idx = i;
+                <option value="@idx">@Renderers[idx].Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="shapes-grid">
+        @foreach (var shape in Shapes)
+        {
+            <div class="shape-card card">
+                <div class="card-header">
+                    <strong>@shape.Name</strong>
+                    <span class="badge bg-secondary">@CurrentRenderer.Name</span>
+                </div>
+                <div class="card-body d-flex justify-content-center align-items-center p-3 bg-light rounded-bottom">
+                    <svg viewBox="0 0 100 100" class="shape-svg">
+                        @((MarkupString)shape.Draw())
+                    </svg>
+                </div>
+            </div>
+        }
+    </div>
+
+    <section class="mt-5 explanation">
+        <h2>Как это работает</h2>
+        <ul>
+            <li><strong>Абстракция (Shape)</strong> — знает ЧТО рисовать (круг, квадрат, треугольник).</li>
+            <li><strong>Реализация (IRenderer)</strong> — знает КАК рисовать (растр или вектор).</li>
+            <li>Фигура получает <code>IRenderer</code> через конструктор и делегирует ему отрисовку.</li>
+            <li>Новый рендерер (например, OpenGL) добавляется без изменения фигур. Новая фигура — без изменения рендереров.</li>
+        </ul>
+    </section>
+</div>
+
+<style>
+    .bridge-demo {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .shapes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .shape-card {
+        min-height: 220px;
+    }
+
+    .shape-svg {
+        width: 150px;
+        height: 150px;
+        display: block;
+    }
+
+    .explanation {
+        border-top: 1px solid #dee2e6;
+        padding-top: 1.5rem;
+    }
+</style>
+
+@code {
+    private readonly List<IRenderer> Renderers = new() { new RasterRenderer(), new VectorRenderer() };
+    private int _selectedRendererIndex;
+    private List<Shape> Shapes = new();
+
+    private int SelectedRendererIndex
+    {
+        get => _selectedRendererIndex;
+        set
+        {
+            _selectedRendererIndex = value;
+            RebuildShapes();
+        }
+    }
+
+    private IRenderer CurrentRenderer => Renderers[SelectedRendererIndex];
+
+    protected override void OnInitialized()
+    {
+        RebuildShapes();
+    }
+
+    private void RebuildShapes()
+    {
+        var r = CurrentRenderer;
+        Shapes = new List<Shape>
+        {
+            new Circle(r, 50, 50, 40),
+            new Square(r, 10, 10, 80),
+            new Triangle(r, 50, 50, 70)
+        };
+    }
+}
